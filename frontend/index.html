@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Traceability Chatbot</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>Traceability Chatbot</h1>
+
+    <div id="mainContainer">
+        <div id="chatbox">
+            <div id="messages"></div>
+            <input type="text" id="promptInput" placeholder="Ask your question...">
+            <button onclick="sendPrompt()">Send</button>
+        </div>
+
+        <div id="uploads">
+            <h2>Upload Requirement Documents</h2>
+            <input type="file" id="uploadInputReq" multiple />
+            <button onclick="uploadFilesReq()">Upload Files</button>
+            <div id="loadingIndicator" style="display:none;">
+                <div class="spinner"></div>
+                <span>Analysing...</span>
+            </div>
+
+            <h2>Upload Code Test Files</h2>
+            <input type="file" id="uploadInputCode" multiple />
+            <button onclick="uploadFilesCode()">Upload Files</button>
+        </div>
+    </div>
+
+    <script src="js/chat.js"></script>
+</body>
+</html>
