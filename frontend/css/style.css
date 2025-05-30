@@ -30,6 +30,9 @@ h1 {
 }
 
 #messages {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     flex-grow: 1;
     min-height: 400px;
     max-height: 600px;
@@ -151,4 +154,26 @@ input[type="file"] {
     #chatbox {
         padding: 15px;
     }
+}
+
+.message {
+    margin: 8px 0;
+    padding: 10px 14px;
+    max-width: 75%;
+    border-radius: 18px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.message.user {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-bottom-right-radius: 0;
+}
+
+.message.bot {
+    background-color: #e2e3e5;
+    color: #383d41;
+    border-bottom-left-radius: 0;
 }

@@ -3,12 +3,12 @@ from tree_sitter import Language, Parser
 
 # Cloned Repos
 LANGUAGE_REPOS = {
-    "python": "vendor/tree-sitter-python",
-    "javascript": "vendor/tree-sitter-javascript",
-    "php": "vendor/tree-sitter-php/php"
+    "python": "../vendor/tree-sitter-python",
+    "javascript": "../vendor/tree-sitter-javascript",
+    "php": "../vendor/tree-sitter-php/php"
 }
 
-BUILD_PATH = 'build/my-languages.so'
+BUILD_PATH = '../build/my-languages.so'
 
 # Build the Tree-sitter language library
 if not os.path.exists(BUILD_PATH):
@@ -94,75 +94,34 @@ def parse_directory_for_functions(path: str):
                 all_functions.extend(functions)
     return all_functions
 
-##### TEST #####
+def question_needs_code_body(question: str) -> bool:
+    keywords = [
+        "how does", "what does", "show the logic", "assert", "check", 
+        "verify", "does it validate", "explain", "implementation", "details"
+    ]
 
-php_code = b"""
-<?php
+    question_lower = question.lower()
+    return any(kw in question_lower for kw in keywords)
 
-namespace Tests\Feature;
+def preprocess_functions(parsed_functions, question):
+    if parsed_functions[0] == "USER HASNT UPLOADED CODE YET":
+        return parsed_functions
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
+    include_code = question_needs_code_body(question)
+    clean = []
 
-class AnswersTest extends TestCase
-{
-    use RefreshDatabase;
 
-    /**
-     * FT-AE1
-     * Test for creating an answer with valid payload
-     */
-    public function test_create_answer_with_valid_playload(): void
-    {
-        $answer_payload = [
-            "answer" => "Test answer1"
-        ];
+    for item in parsed_functions:
+        cleaned_item = {
+            "file": item["file"].split("/")[-1],
+            "function": item["name"],
+            "type": "test" if "test" in item["name"].lower() else "function",
+            "language": item.get("language", "unknown")
+        }
 
-        $request = $this->json('post', '/api/answers', $answer_payload);
-        $request->assertStatus(200);
-        $this->assertDatabaseHas('answers', $answer_payload);
-        $this->assertDatabaseCount('answers', 1);
-    }
+        if include_code:
+            cleaned_item["code"] = item["code"]
 
-    /**
-     * FT-AE2
-     * Test for creating an answer with invalid payload
-     */
-    public function test_create_answer_with_invalid_payload(): void
-    {
-        // the post answer request reqires a 'answer' key to be not null.
-        $malformed_answer_payload = [
-            "bad_payload"=>"bad"
-            // is missing answers field
-        ];
+        clean.append(cleaned_item)
 
-        $request = $this->json('post', '/api/answers', $malformed_answer_payload);
-        $request->assertStatus(422);
-        $this->assertDatabaseCount('answers', 0);
-    }
-}
-"""
-
-functions = extract_functions_from_code(php_code, "php")
-print(functions)
-
-print("---------------------------------")
-js_code = b"""
-function add(a, b) {
-  return a + b;
-}
-
-const subtract = (a, b) => {
-  return a - b;
-};
-
-class Calculator {
-  multiply(a, b) {
-    return a * b;
-  }
-}
-"""
-
-functions = extract_functions_from_code(js_code, "javascript")
-print(functions)
+    return clean

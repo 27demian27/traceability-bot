@@ -10,8 +10,10 @@ async function sendPrompt() {
 
 
     const messages = document.getElementById('messages');
-    messages.innerHTML += `<div><strong>You:</strong> ${message}</div>`;
-
+    messages.innerHTML += `
+    <div style="display: flex; justify-content: flex-end;">
+        <div class="message user">${message}</div>
+    </div>`;
 
     try {
         const response = await fetch('http://127.0.0.1:8000/chat/ask/', {
@@ -19,11 +21,21 @@ async function sendPrompt() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ prompt: message, requirements: state.requirements})
+            body: JSON.stringify(
+                { 
+                    prompt: message, 
+                    requirements: state.requirements, 
+                    code_functions: state.code_functions
+                })
         });
 
         const data = await response.json();
-        messages.innerHTML += `<div><strong>Bot:</strong> ${data.reply}</div>`;
+        const markdownHtml = marked.parse(data.reply);
+
+        messages.innerHTML += `
+            <div style="display: flex; justify-content: flex-start;">
+                <div class="message bot">${markdownHtml}</div>
+            </div>`; 
     } catch (error) {
         messages.innerHTML += `<div><strong>Error:</strong> Could not reach server.</div>`;
         console.error(error);
@@ -57,8 +69,11 @@ async function uploadFilesReq() {
         });
         const data = await response.json();
 
-        messages.innerHTML += `<div><strong>Bot:</strong> Thanks for providing your requirements documents.</div>`;
-        console.log(data)
+        messages.innerHTML += `
+        <div style="display: flex; justify-content: flex-start;">
+            <div class="message bot">Thanks for providing your requirements documents.</div>
+        </div>`;  
+        console.log(data);
         state.requirements = data.requirements;
     } catch (error) {
         messages.innerHTML += `<div><strong>Error:</strong> Upload failed.</div>`;
@@ -70,6 +85,46 @@ async function uploadFilesReq() {
     input.value = '';
 }
 
-async function name(params) {
-    
+async function uploadFilesCode() {
+    console.log("uploadFilesCode");
+
+    const input = document.getElementById('uploadInputCode');
+    const files = input.files;
+    if (files.length === 0) return;
+
+    const formData = new FormData();
+    formData.append('type', 'code');
+    for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+    }
+
+    const messages = document.getElementById('messages');
+    messages.innerHTML += `<div><strong>You:</strong> Uploaded ${files.length} code file(s)</div>`;
+
+    loadingIndicator.style.display = 'flex';
+
+    try {
+        const response = await fetch('http://127.0.0.1:8000/chat/upload/', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        messages.innerHTML += `
+        <div style="display: flex; justify-content: flex-start;">
+            <div class="message bot">Code files received and analyzed.</div>
+        </div>`;  
+        console.log(data);
+
+        state.code_functions = data.code_functions;
+
+    } catch (error) {
+        messages.innerHTML += `<div><strong>Error:</strong> Code upload failed.</div>`;
+        console.error(error);
+    } finally {
+        loadingIndicator.style.display = 'none';
+    }
+
+    input.value = '';
 }

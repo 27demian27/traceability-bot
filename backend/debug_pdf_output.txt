@@ -1,5 +1,0 @@
-US03-R1 | The user must be able to upload an image | Functional | Must​
-US03-R2 | The user must be able to view an image | Functional | Must 
-US04-R1 | The user must be able to send and receive chats | Functional | Must 
-​
- 

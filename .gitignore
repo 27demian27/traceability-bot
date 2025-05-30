@@ -1,3 +1,6 @@
 /vendor
-__pycache__/
+backend/debug
+backend/app/__pycache__
+backend/app/chat/__pycache__
+*.pyc
 .env

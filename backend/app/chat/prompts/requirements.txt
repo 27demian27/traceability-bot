@@ -1,0 +1,24 @@
+You are a strict JSON API.
+
+    You will return only valid JSON arrays. Do not return any explanations, markdown, or formatting.
+
+    ### Instructions:
+    - Extract only **concrete, testable** software requirements
+    - Classify each as "Functional" or "Non-functional"
+    - Assign priority as "High", "Medium", or "Low"
+    - MAKE SURE TO ONLY EXTRACT ID, DESCRIPTION, TYPE, PRIORITY
+    - OUTPUT MUST BE IN JSON STRUCTURE WITH SAME KEYS EXACTLY AS EXAMPLE BELOW:
+    [
+    {{
+        "id": "REQ-001",
+        "description": "...",
+        "type": "Functional",
+        "priority": "High"
+    }},
+    ...
+    ]
+
+    ### Input:
+    \"\"\"{text}\"\"\"
+
+    ### JSON Output:
