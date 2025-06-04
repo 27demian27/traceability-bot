@@ -33,6 +33,7 @@ def extract_functions_from_code(code: bytes, language_id: str):
     root = tree.root_node
 
     functions = []
+    all_comments = []
 
     def is_function_node(node):
         if language_id == "python":
@@ -44,25 +45,49 @@ def extract_functions_from_code(code: bytes, language_id: str):
         return False
 
     def get_name(node):
-        # Common child types that store function/method names
         name_types = {"name", "identifier", "property_identifier"}
         for child in node.children:
             if child.type in name_types:
                 return code[child.start_byte:child.end_byte].decode("utf-8", errors="ignore")
         return None
 
+    def collect_comments(node):
+        comments = []
+        if node.type == "comment":
+            comments.append(node)
+        for child in node.children:
+            comments.extend(collect_comments(child))
+        return comments
 
     def extract_with_cursor(cursor):
         node = cursor.node
         if is_function_node(node):
             func_code = code[node.start_byte:node.end_byte].decode("utf-8", errors="ignore")
             name = get_name(node)
+
+            # Comments within the function
+            inner_comments = [
+                code[c.start_byte:c.end_byte].decode("utf-8", errors="ignore")
+                for c in all_comments
+                if node.start_byte <= c.start_byte < node.end_byte
+            ]
+
+            # Comments directly above the function (up to 2 lines above)
+            leading_comments = [
+                code[c.start_byte:c.end_byte].decode("utf-8", errors="ignore")
+                for c in all_comments
+                if c.end_byte <= node.start_byte and (0 <= node.start_point[0] - c.end_point[0] <= 2)
+            ]
+
+            merged_comment = "\n".join(leading_comments + inner_comments).strip()
+
             functions.append({
                 "type": node.type,
                 "name": name,
                 "code": func_code,
                 "start_line": node.start_point[0] + 1,
-                "end_line": node.end_point[0] + 1
+                "end_line": node.end_point[0] + 1,
+                "comment": merged_comment
             })
 
         if cursor.goto_first_child():
@@ -70,6 +95,8 @@ def extract_functions_from_code(code: bytes, language_id: str):
             while cursor.goto_next_sibling():
                 extract_with_cursor(cursor)
             cursor.goto_parent()
+
+    all_comments = collect_comments(root)
 
     cursor = root.walk()
     extract_with_cursor(cursor)
@@ -107,7 +134,8 @@ def preprocess_functions(parsed_functions, question):
     if parsed_functions[0] == "USER HASNT UPLOADED CODE YET":
         return parsed_functions
 
-    include_code = question_needs_code_body(question)
+    #include_code = question_needs_code_body(question)
+    include_code = False
     clean = []
 
 

@@ -1,3 +1,4 @@
+from django.http import StreamingHttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,23 +9,41 @@ import shutil
 import re
 import fitz
 import uuid
+import requests, json
 
 from .req_extractor import extract_requirements, extract_requirement_candidates, preprocess_requirements
-from .chat_response import chat_response
+from .chat_response import build_prompt
 from .func_parser import parse_directory_for_functions, preprocess_functions
 
 class ChatBotView(APIView):
     def post(self, request):
         user_prompt = request.data.get('prompt', '')
         if not user_prompt:
-            return Response({"error": "Prompt is required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Prompt is required."}, status=400)
 
         code_json = request.data.get('code_functions')
-        requirements_json =  request.data.get('requirements')
+        requirements_json = request.data.get('requirements')
 
-        response = chat_response(user_prompt, requirements_json, code_json)
+        prompt = build_prompt(user_prompt, requirements_json, code_json)
 
-        return Response({"reply": response})
+        def generate():
+            response = requests.post(
+                "http://localhost:11434/api/generate",
+                json={
+                    "model": "deepseek-r1:latest",
+                    "prompt": prompt,
+                    "stream": True
+                },
+                stream=True
+            )
+
+            for line in response.iter_lines():
+                if line:
+                    data = json.loads(line.decode("utf-8"))
+                    token = data.get("response", "")
+                    yield f"data: {token}\n\n"
+
+        return StreamingHttpResponse(generate(), content_type='text/event-stream')
 
 
 
@@ -84,6 +103,7 @@ class FileUploadView(APIView):
         return Response({"requirements": extracted_requirements}, status=status.HTTP_200_OK)
 
     def handle_code_upload(self, request):
+
         if 'files' not in request.FILES:
             return Response({"error": "No files provided."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -91,8 +111,18 @@ class FileUploadView(APIView):
 
         try:
             for file in request.FILES.getlist('files'):
-                file_path = os.path.join(temp_dir, file.name)
-                with open(file_path, 'wb+') as destination:
+                relative_path = file.name
+
+                safe_path = os.path.normpath(relative_path)
+                full_path = os.path.join(temp_dir, safe_path)
+
+
+                if not full_path.startswith(temp_dir):
+                    return Response({"error": "Invalid file path detected."}, status=status.HTTP_400_BAD_REQUEST)
+
+                os.makedirs(os.path.dirname(full_path), exist_ok=True)
+
+                with open(full_path, 'wb+') as destination:
                     for chunk in file.chunks():
                         destination.write(chunk)
 
@@ -105,3 +135,4 @@ class FileUploadView(APIView):
 
         finally:
             shutil.rmtree(temp_dir)
+

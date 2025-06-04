@@ -15,7 +15,7 @@ h1 {
 #mainContainer {
     display: flex;
     gap: 40px;
-    max-width: 1000px;
+    max-width: 2000px;
     margin: 0 auto;
 }
 
@@ -172,8 +172,15 @@ input[type="file"] {
     border-bottom-right-radius: 0;
 }
 
-.message.bot {
-    background-color: #e2e3e5;
+.message.bot.normal {
+    background-color: #ffffff;
     color: #383d41;
     border-bottom-left-radius: 0;
+}
+
+.message.bot.thinking {
+    font-style: italic;
+    color: #6c757d;
+    background-color: #ffffff;
+    opacity: 0.8;
 }

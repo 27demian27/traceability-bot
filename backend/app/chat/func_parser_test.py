@@ -1,4 +1,4 @@
-from ..app.chat.func_parser import extract_functions_from_code
+from app.chat.func_parser import extract_functions_from_code, parse_directory_for_functions
 
 ##### TEST #####
 
@@ -55,6 +55,8 @@ print(functions)
 
 print("---------------------------------")
 js_code = b"""
+// Function that adds
+// Two numbers 
 function add(a, b) {
   return a + b;
 }
@@ -75,5 +77,5 @@ print(functions)
 
 print("---------------------------------")
 
-all_functions = parse_directory_for_functions("../code_repos/raw/MRS/backend/tests")
+all_functions = parse_directory_for_functions("../../code_repos/raw/MRS/backend/tests")
 print(all_functions)

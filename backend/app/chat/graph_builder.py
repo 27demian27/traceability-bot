@@ -6,18 +6,6 @@ def build_similarity_graph(requirements: List[Dict],
                            functions: List[Dict], 
                            similarities: List[Tuple[str, List[Tuple[str, float]]]], 
                            threshold: float = 0.3) -> nx.Graph:
-    """
-    Build a NetworkX graph linking requirements to functions based on similarity scores.
-
-    Args:
-        requirements: List of requirement dicts with 'id' and 'description'.
-        functions: List of function dicts with 'name' and optionally 'code'.
-        similarities: List of tuples (requirement_id, [(function_name, score), ...])
-        threshold: Minimum similarity score to create an edge.
-
-    Returns:
-        A NetworkX graph with nodes and edges.
-    """
     G = nx.Graph()
 
     # Requirement nodes
@@ -40,9 +28,6 @@ def build_similarity_graph(requirements: List[Dict],
     return G
 
 def draw_graph(G: nx.Graph):
-    """
-    Draw the graph using matplotlib for a quick visual inspection.
-    """
     pos = nx.spring_layout(G, seed=42)
 
     req_nodes = [n for n, d in G.nodes(data=True) if d['type'] == 'requirement']

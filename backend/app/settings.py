@@ -19,6 +19,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 
+DATA_UPLOAD_MAX_NUMBER_FILES = 100
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

@@ -19,6 +19,7 @@
         <div id="uploads">
             <h2>Upload Requirement/Design Documents</h2>
             <input type="file" id="uploadInputReq" multiple />
+            <div id="reqUploadErrors"></div>
             <button onclick="uploadFilesReq()">Upload Files</button>
             <div id="loadingIndicator" style="display:none;">
                 <div class="spinner"></div>
@@ -26,7 +27,8 @@
             </div>
 
             <h2>Upload Code Files</h2>
-            <input type="file" id="uploadInputCode" multiple />
+            <input type="file" id="uploadInputCode" webkitdirectory multiple />
+            <div id="codeUploadErrors"></div>
             <button onclick="uploadFilesCode()">Upload Files</button>
         </div>
     </div>

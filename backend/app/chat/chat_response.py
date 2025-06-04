@@ -6,7 +6,7 @@ from .func_parser import preprocess_functions
 from .similarity_computer import return_similarity_matches
 from .graph_builder import build_similarity_graph, draw_graph
 
-def chat_response(text, requirements_json, code_json):
+def build_prompt(text, requirements_json, code_json):
 
     missing_json = 0
     similarity_matches = ["NO SIMILARITY MATCHES YET"]
@@ -22,7 +22,7 @@ def chat_response(text, requirements_json, code_json):
     if not missing_json:
         similarity_matches = return_similarity_matches(requirements_json, code_json, top_n_matches, False)
         graph = build_similarity_graph(requirements_json, code_json, similarity_matches)
-        draw_graph(graph)
+    #   draw_graph(graph)
 
     code_json = preprocess_functions(code_json, text)
 
@@ -44,8 +44,6 @@ def chat_response(text, requirements_json, code_json):
     When receiving a request to locate functionality/test coverage, be concise and mention file names. Dont explain the logic, or tests. 
 
     When the user asks a question your main goal is to trace what and where.
-
-    MAKE SURE TO use newlines to space out tests/code/requirements.
 
     DO NOT RETURN ANY REASONING OR THINKING IN YOUR RESPONSE.
 
@@ -69,35 +67,5 @@ def chat_response(text, requirements_json, code_json):
     with open("debug_prompt.txt", "w") as debug_file:
                     debug_file.write(prompt)
 
-    start = time.time()
 
-    response = requests.post(
-        "http://localhost:11434/api/generate",
-        json={
-            "model": "deepseek-r1:latest",
-            "prompt": prompt,
-            "stream": True
-        },
-        stream=True 
-    )
-    
-    print("Elapsed:", time.time() - start)  
-    
-
-    raw_output = ""
-    for line in response.iter_lines():
-        if line:
-            data = json.loads(line.decode("utf-8"))
-            raw_output += data.get("response", "")
-            #print(data.get("response", ""), end="", flush=True)
-
-    print("\n\nElapsed:", round(time.time() - start, 2), "seconds")
-    
-    # Debug
-    with open("debug_chat_response.txt", "w") as debug_file:
-                    debug_file.write(raw_output)
-
-    # Remove thinking/reasoning from response.
-    stripped_output = raw_output.split("</think>", 1)[-1].lstrip('\n')
-
-    return stripped_output
+    return prompt
