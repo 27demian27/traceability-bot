@@ -184,3 +184,9 @@ input[type="file"] {
     background-color: #ffffff;
     opacity: 0.8;
 }
+
+.drop-zone {
+    border-style: dashed;
+    border-width: 2px;
+    min-height: 60px;
+}

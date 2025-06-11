@@ -14,6 +14,7 @@ import requests, json
 from .req_extractor import extract_requirements, extract_requirement_candidates, preprocess_requirements
 from .chat_response import build_prompt
 from .func_parser import parse_directory_for_functions, preprocess_functions
+from . similarity_computer import return_similarity_matches
 
 class ChatBotView(APIView):
     def post(self, request):
@@ -23,8 +24,8 @@ class ChatBotView(APIView):
 
         code_json = request.data.get('code_functions')
         requirements_json = request.data.get('requirements')
-
-        prompt = build_prompt(user_prompt, requirements_json, code_json)
+        similarities = request.data.get('similarities')
+        prompt = build_prompt(user_prompt, requirements_json, code_json, similarities)
 
         def generate():
             response = requests.post(
@@ -84,7 +85,7 @@ class FileUploadView(APIView):
                 return Response({"error": f"Failed to read file: {f.name}"}, status=status.HTTP_400_BAD_REQUEST)
 
             if 'requirement' in filename:
-                with open("debug_pdf_output.txt", "w") as debug_file:
+                with open("debug/debug_pdf_output.txt", "w") as debug_file:
                     debug_file.write(content)
 
                 #filtered_lines = extract_requirement_candidates(content, k=1, requirement_id_only=True)
@@ -135,4 +136,20 @@ class FileUploadView(APIView):
 
         finally:
             shutil.rmtree(temp_dir)
+
+class EmbeddingView(APIView):
+    def post(self, request):
+        mode = request.data.get("embedding_mode")
+        if not mode:
+            return Response({"error": "Embedding_mode is required."}, status=400)
+        code_json = request.data.get('code_functions')
+        requirements_json = request.data.get('requirements')
+        similarity_matches = return_similarity_matches(requirements_json, code_json, 3, mode)
+        # graph = build_similarity_graph(requirements_json, code_json, similarity_matches)
+        # draw_graph(graph)
+        try:
+            return Response({"similarities": similarity_matches})     
+                
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

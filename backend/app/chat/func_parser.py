@@ -1,7 +1,14 @@
 import os
 from tree_sitter import Language, Parser
 
-# Cloned Repos
+import pkg_resources
+
+try:
+    version = pkg_resources.get_distribution("tree-sitter").version
+    print("tree-sitter version:", version)
+except pkg_resources.DistributionNotFound:
+    print("tree-sitter not found")
+
 LANGUAGE_REPOS = {
     "python": "../vendor/tree-sitter-python",
     "javascript": "../vendor/tree-sitter-javascript",
@@ -10,12 +17,6 @@ LANGUAGE_REPOS = {
 
 BUILD_PATH = '../build/my-languages.so'
 
-# Build the Tree-sitter language library
-if not os.path.exists(BUILD_PATH):
-    Language.build_library(
-        BUILD_PATH,
-        list(LANGUAGE_REPOS.values())
-    )
 
 LANGUAGES = {lang: Language(BUILD_PATH, lang) for lang in LANGUAGE_REPOS}
 

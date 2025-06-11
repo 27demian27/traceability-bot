@@ -1,12 +1,35 @@
+import { marked } from "https://esm.sh/marked";
+import { setupDropZone } from './directoryDropHelper.js';
+
+let droppedCodeFiles = [];
+
+setupDropZone("codeDropZone", (files) => {
+  droppedCodeFiles = files;
+  document.getElementById("codeUploadErrors").textContent =
+    `Ready to upload ${files.length} file(s) from ${new Set(
+      files.map(f => f.fullPath?.split("/")[0])
+    ).size} folder(s). Click “Upload Files”.`;
+});
+
+
 const state = {
     requirements: [],
     code_functions: [],
+    similarities: [],
+    embedding_mode: "default",
+    embedding_mode_changed: false,
 };
 
 async function sendPrompt() {
     const input = document.getElementById('promptInput');
     const message = input.value.trim();
     if (message === "") return;
+
+    if (state.similarities.length == 0 || state.embedding_mode_changed) {
+        await getSimilarities();
+    }
+
+    console.log("Similarities: "+state.similarities);
 
     const messages = document.getElementById('messages');
     messages.innerHTML += `
@@ -32,7 +55,8 @@ async function sendPrompt() {
             body: JSON.stringify({
                 prompt: message,
                 requirements: state.requirements,
-                code_functions: state.code_functions
+                code_functions: state.code_functions,
+                similarities: state.similarities
             })
         });
 
@@ -80,13 +104,35 @@ async function sendPrompt() {
         botMessageDiv.innerHTML = marked.parse(botMessageDiv.innerHTML);
         console.log(botMessageDiv.innerHTML);
     } catch (error) {
-        messages.innerHTML += `<strong>Error:</strong> Could not reach server.`;
+        messages.innerHTML += `<strong>Error:</strong> <i>Could not reach server.</i>`;
         console.error(error);
+    } finally {
+        input.value = '';
     }
-
-    input.value = '';
 }
 
+async function getSimilarities() {
+    try {
+        const response = await fetch('http://127.0.0.1:8000/chat/embedding/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                requirements: state.requirements,
+                code_functions: state.code_functions,
+                embedding_mode: state.embedding_mode,
+            })
+        });
+        const data = await response.json();
+        console.log(data);
+        state.similarities = data.similarities;
+    } catch(error) {
+        messages.innerHTML =
+            "<strong>Error:</strong> <i>Error getting similarities.</i>";
+        console.error(error);
+    } finally {
+        state.embedding_mode_changed = false;
+    }
+}
 
 async function uploadFilesReq() {
     console.log(document.getElementById('uploadInputReq'));
@@ -121,7 +167,7 @@ async function uploadFilesReq() {
         console.log(data);
         state.requirements = data.requirements;
     } catch (error) {
-        errorMessagesessages.innerHTML += `<div><strong>Error:</strong> Upload failed.</div>`;
+        errorMessagesessages.innerHTML += `<div><strong>Error:</strong> <i>Document upload failed.</i></div>`;
         console.error(error);
     } finally {
         loadingIndicator.style.display = 'none';
@@ -131,10 +177,11 @@ async function uploadFilesReq() {
 }
 
 async function uploadFilesCode() {
-    console.log("uploadFilesCode");
-
     const input = document.getElementById('uploadInputCode');
-    const files = input.files;
+    const pickerFiles = Array.from(input.files || []);
+    const files = [...pickerFiles, ...droppedCodeFiles];
+    droppedCodeFiles = [];
+
     if (files.length === 0) return;
 
     const formData = new FormData();
@@ -142,37 +189,41 @@ async function uploadFilesCode() {
 
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        formData.append('files', file, file.webkitRelativePath || file.name);
+        const relPath = file.fullPath || file.webkitRelativePath || file.name;
+        formData.append('files', file, relPath);
     }
 
     const errorMessages = document.getElementById('codeUploadErrors');
-    errorMessages.innerHTML = ""
-    errorMessages.innerHTML += `<div>Uploaded ${files.length} code file(s)</div>`;
+    errorMessages.textContent = `Uploading ${files.length} code file(s)…`;
 
-    loadingIndicator.style.display = 'flex';
-    const messages = document.getElementById('messages');
     try {
-        const response = await fetch('http://127.0.0.1:8000/chat/upload/', {
-            method: 'POST',
+        const response = await fetch("http://127.0.0.1:8000/chat/upload/", {
+            method: "POST",
             body: formData
         });
 
         const data = await response.json();
 
-        messages.innerHTML += `
-        <div style="display: flex; justify-content: flex-start;">
-            <div class="message bot">Code files received and analyzed.</div>
-        </div>`;
+        document.getElementById("messages").innerHTML += `
+            <div style="display:flex;justify-content:flex-start">
+                <div class="message bot">Code files received and analyzed.</div>
+            </div>`;
         console.log(data);
-
         state.code_functions = data.code_functions;
 
     } catch (error) {
-        errorMessages.innerHTML += `<div><strong>Error:</strong> Code upload failed.</div>`;
+        errorMessages.innerHTML =
+            "<strong>Error:</strong> <i>Code upload failed.</i>";
         console.error(error);
     } finally {
-        loadingIndicator.style.display = 'none';
+        errorMessages.textContent = `Succesfully uploaded ${files.length} code file(s).`;
+        input.value = '';
     }
-
-    input.value = '';
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("sendPromptButton").addEventListener("click", sendPrompt);
+    document.getElementById("uploadDocumentsButton").addEventListener("click", uploadFilesReq);
+    document.getElementById("uploadCodeButton").addEventListener("click", uploadFilesCode);
+    document.getElementById("embedding_mode").addEventListener("change", () => {state.embedding_mode = document.getElementById("embedding_mode").value; state.embedding_mode_changed = true});
+});

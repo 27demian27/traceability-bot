@@ -1,3 +1,8 @@
+from openai import OpenAI
+
+import os
+from dotenv import load_dotenv, dotenv_values 
+
 import requests
 import json
 import re
@@ -37,7 +42,8 @@ import re
 
 def preprocess_requirements(text: str) -> list:
     lines = text.splitlines()
-    req_id_pattern = re.compile(r'^(US\d+-[A-Z]\d+)\s*(.*)')
+    req_id_pattern = re.compile(r'^(?!US-\d+$)[A-Z]{1,3}[A-Z0-9]*(?:[-_][A-Z0-9]+)+\b')
+    requirement_keywords = {"shall", "must", "should", "can", "may", "will", "has"}
     blocks = []
     current_block = []
 
@@ -51,14 +57,28 @@ def preprocess_requirements(text: str) -> list:
 
     if current_block:
         blocks.append("\n".join(current_block))
+    
+    keyword_filtered_blocks = []
 
-    return blocks
+    for block in blocks:
+        if any(keyword in block.lower() for keyword in requirement_keywords):
+            keyword_filtered_blocks.append(block)
+    return keyword_filtered_blocks
 
 def extract_requirements(text):
     
     start = time.time()
 
-    # --------- ROUND 1 ---------
+    local_model = True
+
+    load_dotenv() 
+
+    mode = os.getenv("LLM_MODE")
+
+    if mode == "API":
+        local_model = False
+
+    print("EXTRACTING REQUIREMENTS IN ", mode, " MODE")
 
     prompt = f"""
     You will extract software requirements to structured JSON.
@@ -67,7 +87,7 @@ def extract_requirements(text):
     - "id" (string)
     - "description" (the description exactly as given)
     - "type" ("Functional" (F) or "Non-functional" (NF))
-    - "priority" ("Must" or "Want")
+    - "priority" ("Must", "Should", "Could", "Will Not")
 
     Rules:
     - DO NOT include any explanation, comments, markdown, or extra formatting.
@@ -98,24 +118,41 @@ def extract_requirements(text):
     ### JSON Output:
     """
 
-    response = requests.post(
-        "http://localhost:11434/api/generate",
-        json={
-            "model": "mistral",
-            "prompt": prompt,
-            "stream": False
-        }
-    )
 
-    # Extract response string
-    raw_output = response.json().get("response", "")
+
+    if local_model:
+        response = requests.post(
+            "http://localhost:11434/api/generate",
+            json={
+                "model": "mistral",
+                "prompt": prompt,
+                "stream": False
+            }
+        )
+
+        raw_output = response.json().get("response", "")
+
+    else:
+        client = OpenAI(
+            api_key=os.getenv("LLM_API_KEY")
+        )
+
+        completion = client.chat.completions.create(
+            model=os.getenv("LLM_API_MODEL"),
+            store=True,
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+        )
+
+        raw_output = completion.choices[0].message.content
 
     print("\n\nRound 1 Elapsed:", round(time.time() - start, 2), "seconds")
 
     # Debug
-    with open("debug_requirements_p1.txt", "w") as debug_file:
+    with open("debug/debug_requirements_p1.txt", "w") as debug_file:
                     debug_file.write(prompt)
-    with open("debug_requirements_r1.txt", "w") as debug_file:
+    with open("debug/debug_requirements_r1.txt", "w") as debug_file:
                     debug_file.write(raw_output)
 
     #raw_output = raw_output.split("</think>", 1)[-1].lstrip('\n')

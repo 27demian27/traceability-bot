@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Traceability Chatbot</title>
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script type="module" src="js/chat.js"></script>
 </head>
 <body>
     <h1>Traceability Chatbot</h1>
@@ -13,23 +13,35 @@
         <div id="chatbox">
             <div id="messages"></div>
             <input type="text" id="promptInput" placeholder="Ask your question...">
-            <button onclick="sendPrompt()">Send</button>
+            <button id="sendPromptButton">Send</button>
         </div>
 
         <div id="uploads">
             <h2>Upload Requirement/Design Documents</h2>
             <input type="file" id="uploadInputReq" multiple />
             <div id="reqUploadErrors"></div>
-            <button onclick="uploadFilesReq()">Upload Files</button>
+            <button id="uploadDocumentsButton">Upload Files</button>
             <div id="loadingIndicator" style="display:none;">
                 <div class="spinner"></div>
-                <span>Analysing... (this could take a minute)</span>
+                <span>Analysing... (this may take a moment)</span>
             </div>
 
             <h2>Upload Code Files</h2>
             <input type="file" id="uploadInputCode" webkitdirectory multiple />
+            <div id="codeDropZone" class="drop-zone">
+            Drop one or more folders here
+            </div>
             <div id="codeUploadErrors"></div>
-            <button onclick="uploadFilesCode()">Upload Files</button>
+            <button id="uploadCodeButton">Upload Files</button>
+
+            <h3>Embedding mode</h3>
+            <label for="embedding_mode">Select code embedding mode:</label>
+            <select id="embedding_mode" name="embedding_mode">
+            <option value="default">Func Name</option>
+            <option value="comment">Func Name + Comment</option>
+            <option value="code">Func Name + Comment + Func Code</option>
+            </select>
+            <div id="embeddingModeChangeErrors"></div>
         </div>
     </div>
 

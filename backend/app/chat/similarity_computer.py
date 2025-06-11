@@ -4,7 +4,20 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-def return_similarity_matches(req_json, func_json, top_n = 3, include_code: bool = False, include_comment = False):
+def return_similarity_matches(req_json, func_json, top_n = 3, mode = "default"):
+
+    if not req_json or not func_json:
+        return []
+
+    include_comment = False
+    include_code = False
+
+    if mode == "comment":
+        include_comment = True
+    elif mode == "code":
+        include_comment = True
+        include_code = True
+
 
     req_texts, req_labels = extract_text_from_requirements(req_json)
     func_texts, func_labels = extract_text_from_functions(func_json, include_code=include_code, include_comment=include_comment)
