@@ -32,13 +32,12 @@ def build_prompt(text, requirements_json, code_json, similarities):
 
     If you havent received this yet from the user please ask them to do so.
 
-    When receiving a request to locate functionality/test coverage, be concise and mention file names. Dont explain the logic, or tests. 
+    When receiving a request to locate functionality/test coverage, be concise and mention file names. Dont explain the logic, or tests unless asked. 
 
-    When the user asks a question your main goal is to trace what and where.
+    Clearly space out different requirements using markdown format.
 
-    Clearly space out different requirements using markdown.
-
-    ### User message [MAKE SURE TO JUST ANSWER THIS AND NOT PROVIDE ADDITIONAL INFO]:
+    Make sure to ONLY answer the lastest user message and not provide additional info.
+    ### User messages:
     \"\"\"{text}\"\"\"
 
     ### User project related info:

@@ -49,9 +49,11 @@ async function sendPrompt() {
     messages.appendChild(botMessageContainer);
 
     try {
-        const response = await fetch('http://127.0.0.1:8000/chat/ask/', {
+        const response = await fetch('http://localhost:8000/chat/ask/', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json'
+                     },
+            credentials: "include",
             body: JSON.stringify({
                 prompt: message,
                 requirements: state.requirements,
@@ -113,9 +115,10 @@ async function sendPrompt() {
 
 async function getSimilarities() {
     try {
-        const response = await fetch('http://127.0.0.1:8000/chat/embedding/', {
+        const response = await fetch('http://localhost:8000/chat/embedding/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
             body: JSON.stringify({
                 requirements: state.requirements,
                 code_functions: state.code_functions,
@@ -154,8 +157,9 @@ async function uploadFilesReq() {
     loadingIndicator.style.display = 'flex';
     const messages = document.getElementById('messages');
     try {
-        const response = await fetch('http://127.0.0.1:8000/chat/upload/', {
+        const response = await fetch('http://localhost:8000/chat/upload/', {
             method: 'POST',
+            credentials: 'include',
             body: formData
         });
         const data = await response.json();
@@ -197,8 +201,9 @@ async function uploadFilesCode() {
     errorMessages.textContent = `Uploading ${files.length} code file(s)…`;
 
     try {
-        const response = await fetch("http://127.0.0.1:8000/chat/upload/", {
+        const response = await fetch("http://localhost:8000/chat/upload/", {
             method: "POST",
+            credentials: 'include',
             body: formData
         });
 
@@ -221,9 +226,23 @@ async function uploadFilesCode() {
     }
 }
 
+async function clearSession() {
+    try {
+        await fetch("http://localhost:8000/chat/clear_session/", {
+            method: "POST",
+            credentials: "include"
+        });
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+window.addEventListener("unload", clearSession);
+
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("sendPromptButton").addEventListener("click", sendPrompt);
     document.getElementById("uploadDocumentsButton").addEventListener("click", uploadFilesReq);
     document.getElementById("uploadCodeButton").addEventListener("click", uploadFilesCode);
     document.getElementById("embedding_mode").addEventListener("change", () => {state.embedding_mode = document.getElementById("embedding_mode").value; state.embedding_mode_changed = true});
 });
+
