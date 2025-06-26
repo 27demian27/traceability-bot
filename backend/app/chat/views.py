@@ -15,7 +15,7 @@ from .func_parser import parse_directory_for_functions, preprocess_functions
 from .similarity_computer import return_similarity_matches
 from .graph_builder import build_similarity_graph, save_graph, draw_graph
 
-K=3
+K=5
 
 class ChatBotView(APIView):
 

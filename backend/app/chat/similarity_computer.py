@@ -34,6 +34,10 @@ def return_similarity_matches(req_json, func_json, top_n = 3, mode = "default"):
             key=lambda x: x[1], reverse=True
         )
         matches.append((req_label, ranked[:top_n]))
+    
+    with open("debug/debug_matches.txt", "w") as debug_file:
+                    debug_file.write(str(matches))
+
     return matches
 
 def extract_text_from_requirements(req_json):
