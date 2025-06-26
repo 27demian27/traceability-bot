@@ -41,6 +41,9 @@ def extract_requirement_candidates(text: str, k: int = 2, requirement_id_only: b
 import re
 
 def preprocess_requirements(text: str) -> list:
+    start = time.time()
+    print("Starting preprocessing")
+
     lines = text.splitlines()
     req_id_pattern = re.compile(r'^(?!US-\d+$)[A-Z]{1,3}[A-Z0-9]*(?:[-_][A-Z0-9]+)+\b')
     requirement_keywords = {"shall", "must", "should", "can", "may", "will", "has"}
@@ -63,6 +66,8 @@ def preprocess_requirements(text: str) -> list:
     for block in blocks:
         if any(keyword in block.lower() for keyword in requirement_keywords):
             keyword_filtered_blocks.append(block)
+    end = time.time()
+    print(f"Preprocess time: {end - start:.6f} seconds")
     return keyword_filtered_blocks
 
 def extract_requirements(text):
