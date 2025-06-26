@@ -1,7 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.use('Agg')
 
 from typing import List, Tuple, Dict
 
@@ -34,14 +33,14 @@ def build_similarity_graph(requirements: List[Dict],
     return G
 
 
-def draw_graph(G: nx.Graph, filename='graph.png'):
-    pos = nx.spring_layout(G, seed=42, k=1.5)
+def _plot_graph(G: nx.Graph):
+    pos = nx.spring_layout(G, seed=42)
 
     req_nodes = [n for n, d in G.nodes(data=True) if d.get('type') == 'requirement']
     func_nodes = [n for n, d in G.nodes(data=True) if d.get('type') == 'function']
     test_func_nodes = [n for n, d in G.nodes(data=True) if d.get('type') == 'test']
 
-    plt.figure(figsize=(20, 15))
+    plt.figure(figsize=(10, 7))
     
     nx.draw_networkx_nodes(G, pos, nodelist=req_nodes, node_color='red', label='Requirements')
     nx.draw_networkx_nodes(G, pos, nodelist=func_nodes, node_color='skyblue', label='Functions')
@@ -52,11 +51,21 @@ def draw_graph(G: nx.Graph, filename='graph.png'):
     edge_labels = nx.get_edge_attributes(G, 'label')
     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=8)
 
-    plt.title("Requirement-Test Similarity Graph")
+    plt.title("Requirements Similarity Graph")
     plt.legend()
     plt.axis('off')
     plt.tight_layout()
 
-    plt.savefig(filename, format='png', dpi=300)
-    plt.close()
+    return plt
 
+
+def draw_graph(G: nx.Graph):
+    """Displays the graph interactively"""
+    print("DRAWING GRAPH")
+    _plot_graph(G).show()
+
+
+def save_graph(G: nx.Graph, filename='graph.png'):
+    """Saves the graph to an image file"""
+    _plot_graph(G).savefig(filename, format='png', dpi=300)
+    plt.close()

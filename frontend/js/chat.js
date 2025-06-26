@@ -240,6 +240,18 @@ async function uploadCode() {
     }
 }
 
+async function drawGraph() {
+    const url = `http://localhost:8000/chat/graph/?mode=${state.embedding_mode}`;
+    try {
+        await fetch(url, {
+            method: "GET",
+            credentials: "include",
+        });
+    } catch(error) {
+        console.error(error);
+    }
+}
+
 async function clearSession() {
     state.embedding_mode_changed = true;
     try {
@@ -294,7 +306,7 @@ document.addEventListener("DOMContentLoaded", () => {
         await sendPrompt();
     }
     });
-    
+    document.getElementById("drawGraphButton").addEventListener("click", drawGraph);
     document.getElementById("uploadDocumentsButton").addEventListener("click", uploadDocuments);
     document.getElementById("uploadCodeButton").addEventListener("click", uploadCode);
     document.getElementById("embedding_mode").addEventListener("change", () => {state.embedding_mode = document.getElementById("embedding_mode").value; state.embedding_mode_changed = true});

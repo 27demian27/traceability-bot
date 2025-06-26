@@ -6,16 +6,16 @@ from rest_framework.parsers import MultiPartParser
 from openai import OpenAI
 from dotenv import load_dotenv, dotenv_values 
 
-import tempfile, os, shutil, re, fitz, uuid, requests, json
+import tempfile, os, shutil, re, fitz, uuid, requests, json, threading
 
 from .models import UploadedDocument
 from .req_extractor import extract_requirements, extract_requirement_candidates, preprocess_requirements
 from .prompt_builder import build_prompt
 from .func_parser import parse_directory_for_functions, preprocess_functions
 from .similarity_computer import return_similarity_matches
-from .graph_builder import build_similarity_graph, draw_graph
+from .graph_builder import build_similarity_graph, save_graph, draw_graph
 
-K=5
+K=3
 
 class ChatBotView(APIView):
 
@@ -299,8 +299,8 @@ class EmbeddingView(APIView):
         similarity_matches = return_similarity_matches(requirements_json, code_json, top_n=K, mode=mode)
         graph = build_similarity_graph(requirements_json, code_json, similarity_matches)
         
-        print("DRAWING NEW SIMILARITY GRAPH")
-        draw_graph(graph, "debug/similarity_graph.png")
+        save_graph(graph, "debug/similarity_graph.png")
+
         request.session["similarities"] = self.convert_similarity_matches(similarity_matches)
         request.session.save()
         try:
@@ -308,6 +308,30 @@ class EmbeddingView(APIView):
                 
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class GraphView(APIView):
+    def get(self, request):
+        requirements_list = request.session.get("requirements")
+        code = request.session.get("code")
+        similarities = request.session.get("similarities")
+
+        if not requirements_list:
+            return Response({"status": "no requirements"})
+        if not code:
+            return Response({"status": "no code"})
+        if not similarities:
+            return Response({"status": "no similarities"})
+        try:
+            requirements_json = [item for sublist in requirements_list for item in sublist]
+            print("DRAWING NEW SIMILARITY GRAPH")
+            graph = build_similarity_graph(requirements_json, code, similarities)
+            thread = threading.Thread(target=draw_graph, args=(graph,))
+            thread.start()
+            return Response({"status": "ok"})
+        except Exception as e:
+            print(f"Exception occurred: {e}")
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class ClearSessionView(APIView):
     def post(self, request):

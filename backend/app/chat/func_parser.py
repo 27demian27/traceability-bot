@@ -15,7 +15,7 @@ LANGUAGE_REPOS = {
     "php": "../vendor/tree-sitter-php/php"
 }
 
-BUILD_PATH = '../build/my-languages.so' # ../build/my-languages.so when running local
+BUILD_PATH = 'build/my-languages.so' # ../build/my-languages.so when running local
 
 
 LANGUAGES = {lang: Language(BUILD_PATH, lang) for lang in LANGUAGE_REPOS}
