@@ -1,19 +1,25 @@
 services:
   backend:
+    env_file:
+    - .env
     build:
       context: .
       dockerfile: backend/Dockerfile
     volumes:
-      - ./backend:/app
+      - ./backend:/app/backend
+      - ./build:/app/build
+      - ./build-parsers.py:/app/build-parsers.py
+    working_dir: /app
     ports:
       - "8000:8000"
     depends_on:
       - frontend
+    command: ["python", "backend/manage.py", "runserver", "0.0.0.0:8000"]
 
   frontend:
     build:
-      context: .
-      dockerfile: frontend/Dockerfile
+      context: frontend
+      dockerfile: Dockerfile
     volumes:
       - ./frontend:/usr/src/app
     ports:

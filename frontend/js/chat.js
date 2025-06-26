@@ -1,4 +1,3 @@
-import { marked } from "https://esm.sh/marked";
 import { setupDropZone } from './directoryDropHelper.js';
 
 let droppedCodeFiles = [];
@@ -13,9 +12,6 @@ setupDropZone("codeDropZone", (files) => {
 
 
 const state = {
-    requirements: [],
-    code_functions: [],
-    similarities: [],
     embedding_mode: "default",
     embedding_mode_changed: false,
 };
@@ -25,11 +21,10 @@ async function sendPrompt() {
     const message = input.value.trim();
     if (message === "") return;
 
-    if (state.similarities.length == 0 || state.embedding_mode_changed) {
+    if (state.embedding_mode_changed) {
         await getSimilarities();
     }
 
-    console.log("Similarities: "+state.similarities);
 
     const messages = document.getElementById('messages');
     messages.innerHTML += `
@@ -42,7 +37,7 @@ async function sendPrompt() {
     botMessageContainer.style.justifyContent = 'flex-start';
 
     const botMessageDiv = document.createElement('div');
-    botMessageDiv.className = 'message bot normal';
+    botMessageDiv.className = 'message bot normal markdown-body';
     botMessageDiv.textContent = '';
 
     botMessageContainer.appendChild(botMessageDiv);
@@ -56,9 +51,6 @@ async function sendPrompt() {
             credentials: "include",
             body: JSON.stringify({
                 prompt: message,
-                requirements: state.requirements,
-                code_functions: state.code_functions,
-                similarities: state.similarities
             })
         });
 
@@ -70,8 +62,7 @@ async function sendPrompt() {
         const decoder = new TextDecoder("utf-8");
         let buffer = "";
         let raw_read = "";
-        let test_string = "";
-
+        let markdownBuffer = "";
         
         while (true) {
             const { value, done } = await reader.read();
@@ -85,25 +76,26 @@ async function sendPrompt() {
                 const part = parts[i];
                 //console.log("part: "+ part);
                 if (part.includes("data:")) {
-                    const chunk = part.slice(6);
-                    test_string += chunk;
-                    botMessageDiv.innerHTML += chunk;
-                    if(chunk.includes("<think>")) {
+                    const markdownChunk = part.slice(6);
+                    markdownBuffer += markdownChunk;
+
+                    botMessageDiv.textContent = markdownBuffer;
+
+                    if(markdownChunk.includes("<think>")) {
                         botMessageDiv.className = 'message bot thinking';
                     }
-                    if(chunk.includes("</think>")) {
+                    if(markdownChunk.includes("</think>")) {
                         botMessageDiv.className = 'message bot normal';
-                        botMessageDiv.innerHTML = ''
+                        markdownBuffer = '';
                     }
                 } else {
-                    test_string += '\n';
-                    botMessageDiv.innerHTML += '\n';
+                    markdownBuffer += "\n";
                 }
                 messages.scrollTop = messages.scrollHeight;
             }
             buffer = parts[parts.length - 1];
         }
-        botMessageDiv.innerHTML = marked.parse(botMessageDiv.innerHTML);
+        botMessageDiv.innerHTML = marked.parse(markdownBuffer);
         console.log(botMessageDiv.innerHTML);
     } catch (error) {
         messages.innerHTML += `<strong>Error:</strong> <i>Could not reach server.</i>`;
@@ -120,14 +112,11 @@ async function getSimilarities() {
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
             body: JSON.stringify({
-                requirements: state.requirements,
-                code_functions: state.code_functions,
-                embedding_mode: state.embedding_mode,
+                embedding_mode: state.embedding_mode
             })
         });
         const data = await response.json();
         console.log(data);
-        state.similarities = data.similarities;
     } catch(error) {
         messages.innerHTML =
             "<strong>Error:</strong> <i>Error getting similarities.</i>";
@@ -137,41 +126,63 @@ async function getSimilarities() {
     }
 }
 
-async function uploadFilesReq() {
-    console.log(document.getElementById('uploadInputReq'));
-    console.log("uploadFilesReq")
-    const input = document.getElementById('uploadInputReq');
+async function uploadDocuments() {
+    console.log(document.getElementById('uploadInputDocuments'));
+    console.log("uploadDocuments")
+    const input = document.getElementById('uploadInputDocuments');
     const files = input.files;
+    console.log(input.files);
     if (files.length === 0) return;
 
     const formData = new FormData();
-    formData.append('type', 'req');
     for (let i = 0; i < files.length; i++) {
-        formData.append('files', files[i]);
+        const file = files[i];
+        if (file.type == "") { continue }
+
+        let type = 'unknown';
+        if (file.name.toLowerCase().includes('testing')) {
+            type = 'test';
+        } else if (file.name.toLowerCase().includes('requirement')) {
+            type = 'req';
+        }
+        formData.append(`files[${i}]`, file);
+        formData.append(`types[${i}]`, type);
     }
 
-    const errorMessages = document.getElementById('reqUploadErrors');
+    const errorMessages = document.getElementById('docUploadErrors');
     errorMessages.innerHTML = ""
-    errorMessages.innerHTML += `<div>Uploaded ${files.length} file(s)</div>`;
+    errorMessages.innerHTML += `<div>Uploading ${files.length} file(s)...</div>`;
 
     loadingIndicator.style.display = 'flex';
     const messages = document.getElementById('messages');
     try {
-        const response = await fetch('http://localhost:8000/chat/upload/', {
+        for (let pair of formData.entries()) {
+            console.log(pair[0], pair[1]);
+        }
+        const response = await fetch('http://localhost:8000/chat/upload/docs/', {
             method: 'POST',
             credentials: 'include',
             body: formData
         });
         const data = await response.json();
-
-        messages.innerHTML += `
-        <div style="display: flex; justify-content: flex-start;">
-            <div class="message bot">Thanks for providing your requirements documents.</div>
-        </div>`;  
+        console.log(data.files_uploaded.length);
+        if (data.files_uploaded.length > 0) {
+            messages.innerHTML += `
+            <div style="display: flex; justify-content: flex-start;">
+                <div class="message bot">Thanks for providing your requirements documents.</div>
+            </div>`;  
+            errorMessages.innerHTML += `<div>Successfully uploaded ${files.length} file(s).</div>`;
+        } else {
+            messages.innerHTML += `
+            <div style="display: flex; justify-content: flex-start;">
+                <div class="message bot">Please make sure you are uploading PDF documents.</div>
+            </div>`;
+            errorMessages.innerHTML = ""
+        }  
         console.log(data);
-        state.requirements = data.requirements;
     } catch (error) {
-        errorMessagesessages.innerHTML += `<div><strong>Error:</strong> <i>Document upload failed.</i></div>`;
+        errorMessages.innerHTML = ""
+        errorMessages.innerHTML += `<div><strong>Error:</strong> <i>Document upload failed.</i></div>`;
         console.error(error);
     } finally {
         loadingIndicator.style.display = 'none';
@@ -180,7 +191,7 @@ async function uploadFilesReq() {
     input.value = '';
 }
 
-async function uploadFilesCode() {
+async function uploadCode() {
     const input = document.getElementById('uploadInputCode');
     const pickerFiles = Array.from(input.files || []);
     const files = [...pickerFiles, ...droppedCodeFiles];
@@ -201,21 +212,24 @@ async function uploadFilesCode() {
     errorMessages.textContent = `Uploading ${files.length} code file(s)…`;
 
     try {
-        const response = await fetch("http://localhost:8000/chat/upload/", {
+        const response = await fetch("http://localhost:8000/chat/upload/code/", {
             method: "POST",
             credentials: 'include',
             body: formData
         });
 
         const data = await response.json();
-
-        document.getElementById("messages").innerHTML += `
-            <div style="display:flex;justify-content:flex-start">
-                <div class="message bot">Code files received and analyzed.</div>
-            </div>`;
         console.log(data);
-        state.code_functions = data.code_functions;
-
+        if (data.status == "success") {
+            document.getElementById("messages").innerHTML += `
+                <div style="display:flex;justify-content:flex-start">
+                    <div class="message bot">Code files received and analyzed.</div>
+                </div>`;
+        } else {
+            errorMessages.innerHTML =
+            "<strong>Error:</strong> <i>Code upload failed.</i>";
+        }
+        
     } catch (error) {
         errorMessages.innerHTML =
             "<strong>Error:</strong> <i>Code upload failed.</i>";
@@ -227,11 +241,38 @@ async function uploadFilesCode() {
 }
 
 async function clearSession() {
+    state.embedding_mode_changed = true;
     try {
         await fetch("http://localhost:8000/chat/clear_session/", {
             method: "POST",
-            credentials: "include"
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            credentials: "include",
+            body: JSON.stringify({
+                clear_chat_only: false
+            })
         });
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+async function clearChatSession() {
+    const messages = document.getElementById('messages');
+    console.log("clearChatSession")
+    try {
+        await fetch("http://localhost:8000/chat/clear_session/", {
+            method: "POST",
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            credentials: "include",
+            body: JSON.stringify({
+                clear_chat_only: true
+            })
+        });
+        messages.innerHTML = "";
     } catch(error) {
         console.error(error);
     }
@@ -240,9 +281,22 @@ async function clearSession() {
 window.addEventListener("unload", clearSession);
 
 document.addEventListener("DOMContentLoaded", () => {
+    state.embedding_mode_changed = true;
     document.getElementById("sendPromptButton").addEventListener("click", sendPrompt);
-    document.getElementById("uploadDocumentsButton").addEventListener("click", uploadFilesReq);
-    document.getElementById("uploadCodeButton").addEventListener("click", uploadFilesCode);
+    document.getElementById("chatbox").addEventListener("click", (e) => {
+        if (e.target.closest("#refreshChatButton")) {
+            clearChatSession();
+        }
+    });    
+    document.getElementById("promptInput").addEventListener("keydown", async function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        await sendPrompt();
+    }
+    });
+    
+    document.getElementById("uploadDocumentsButton").addEventListener("click", uploadDocuments);
+    document.getElementById("uploadCodeButton").addEventListener("click", uploadCode);
     document.getElementById("embedding_mode").addEventListener("change", () => {state.embedding_mode = document.getElementById("embedding_mode").value; state.embedding_mode_changed = true});
 });
 

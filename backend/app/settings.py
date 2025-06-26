@@ -20,14 +20,14 @@ DEBUG = True
 ALLOWED_HOSTS = ["localhost"]
 
 CORS_ALLOWED_ORIGINS = [
-    os.getenv("FRONTEND_HOST_URL")
+    os.getenv("FRONTEND_HOST_URL", "http://localhost:8080")
 ]
 
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
-    os.getenv("FRONTEND_HOST_URL")
+    os.getenv("FRONTEND_HOST_URL", "http://localhost:8080")
 ]
 
 SESSION_COOKIE_SECURE = False
@@ -38,6 +38,7 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 DATA_UPLOAD_MAX_NUMBER_FILES = 100
 
 INSTALLED_APPS = [
+    'app.chat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

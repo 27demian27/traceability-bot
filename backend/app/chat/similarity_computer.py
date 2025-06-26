@@ -50,6 +50,8 @@ def extract_text_from_functions(func_json, include_code, include_comment):
     texts = []
     labels = []
     for func in func_json:
+        if not func.get('name', ''):
+            continue
         text = func.get('name', '')
         if include_comment:
             text  = text + func.get('comment', '')

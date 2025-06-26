@@ -1,5 +1,8 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
+
 from typing import List, Tuple, Dict
 
 def build_similarity_graph(requirements: List[Dict], 
@@ -12,9 +15,12 @@ def build_similarity_graph(requirements: List[Dict],
     for req in requirements:
         G.add_node(req['id'], label=req['id'], type='requirement', description=req.get('description', ''))
 
+    print(functions)
     # Function nodes
     for func in functions:
         nodetype = 'function'
+        if(func['type'] == "arrow_function"):
+            continue
         if "test" in func['name']:
             nodetype = 'test'
         G.add_node(func['name'], label=func['name'], type=nodetype, code=func.get('code', ''))
@@ -27,14 +33,15 @@ def build_similarity_graph(requirements: List[Dict],
 
     return G
 
-def draw_graph(G: nx.Graph):
-    pos = nx.spring_layout(G, seed=42)
 
-    req_nodes = [n for n, d in G.nodes(data=True) if d['type'] == 'requirement']
-    func_nodes = [n for n, d in G.nodes(data=True) if d['type'] == 'function']
-    test_func_nodes = [n for n, d in G.nodes(data=True) if d['type'] == 'test']
+def draw_graph(G: nx.Graph, filename='graph.png'):
+    pos = nx.spring_layout(G, seed=42, k=1.5)
 
-    plt.figure(figsize=(12, 8))
+    req_nodes = [n for n, d in G.nodes(data=True) if d.get('type') == 'requirement']
+    func_nodes = [n for n, d in G.nodes(data=True) if d.get('type') == 'function']
+    test_func_nodes = [n for n, d in G.nodes(data=True) if d.get('type') == 'test']
+
+    plt.figure(figsize=(20, 15))
     
     nx.draw_networkx_nodes(G, pos, nodelist=req_nodes, node_color='red', label='Requirements')
     nx.draw_networkx_nodes(G, pos, nodelist=func_nodes, node_color='skyblue', label='Functions')
@@ -49,4 +56,7 @@ def draw_graph(G: nx.Graph):
     plt.legend()
     plt.axis('off')
     plt.tight_layout()
-    plt.show()
+
+    plt.savefig(filename, format='png', dpi=300)
+    plt.close()
+

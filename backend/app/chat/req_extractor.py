@@ -73,12 +73,10 @@ def extract_requirements(text):
 
     load_dotenv() 
 
-    mode = os.getenv("LLM_MODE")
+    mode = os.getenv("LLM_MODE_REQ_EXTRACTION")
 
     if mode == "API":
         local_model = False
-
-    print("EXTRACTING REQUIREMENTS IN ", mode, " MODE")
 
     prompt = f"""
     You will extract software requirements to structured JSON.
@@ -121,6 +119,7 @@ def extract_requirements(text):
 
 
     if local_model:
+        print("EXTRACTING REQUIREMENTS IN LOCAL MODE")
         response = requests.post(
             "http://localhost:11434/api/generate",
             json={
@@ -133,6 +132,7 @@ def extract_requirements(text):
         raw_output = response.json().get("response", "")
 
     else:
+        print("EXTRACTING REQUIREMENTS IN API MODE")
         client = OpenAI(
             api_key=os.getenv("LLM_API_KEY")
         )
@@ -147,7 +147,7 @@ def extract_requirements(text):
 
         raw_output = completion.choices[0].message.content
 
-    print("\n\nRound 1 Elapsed:", round(time.time() - start, 2), "seconds")
+    print("\n\nExtracted requirements, elapsed:", round(time.time() - start, 2), "seconds")
 
     # Debug
     with open("debug/debug_requirements_p1.txt", "w") as debug_file:

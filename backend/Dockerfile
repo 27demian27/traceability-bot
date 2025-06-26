@@ -7,13 +7,9 @@ RUN apt-get update && apt-get install -y \
 
 COPY backend/requirements.txt /tmp/requirements.txt
 
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN pip install -r /tmp/requirements.txt
 
-
-
-COPY . /app
 WORKDIR /app
+RUN mkdir -p debug
 
-RUN python build-parsers.py
-
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "backend/manage.py", "runserver", "0.0.0.0:8000"]

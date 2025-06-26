@@ -2,7 +2,7 @@ FROM python:3.11-slim
 
 WORKDIR /usr/src/app
 
-COPY frontend/ .
+COPY . .
 
 EXPOSE 8080
 

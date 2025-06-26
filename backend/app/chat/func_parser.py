@@ -15,7 +15,7 @@ LANGUAGE_REPOS = {
     "php": "../vendor/tree-sitter-php/php"
 }
 
-BUILD_PATH = '../build/my-languages.so'
+BUILD_PATH = '../build/my-languages.so' # ../build/my-languages.so when running local
 
 
 LANGUAGES = {lang: Language(BUILD_PATH, lang) for lang in LANGUAGE_REPOS}
@@ -132,7 +132,7 @@ def question_needs_code_body(question: str) -> bool:
     return any(kw in question_lower for kw in keywords)
 
 def preprocess_functions(parsed_functions, question):
-    if parsed_functions[0] == "USER HASNT UPLOADED CODE YET":
+    if parsed_functions == "USER HASNT UPLOADED CODE YET":
         return parsed_functions
 
     #include_code = question_needs_code_body(question)
@@ -143,8 +143,8 @@ def preprocess_functions(parsed_functions, question):
     for item in parsed_functions:
         cleaned_item = {
             "file": item["file"].split("/")[-1],
-            "function": item["name"],
-            "type": "test" if "test" in item["name"].lower() else "function",
+            "function_name": item["name"],
+            "type": "test" if "test" in item["file"].lower() else "function",
             "language": item.get("language", "unknown")
         }
 
