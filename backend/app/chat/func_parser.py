@@ -15,7 +15,9 @@ LANGUAGE_REPOS = {
     "php": "../vendor/tree-sitter-php/php"
 }
 
-BUILD_PATH = '../build/my-languages.so' # ../build/my-languages.so when running local
+# build/my-language.so when running docker
+# ../build/my-languages.so when running local
+BUILD_PATH = '../build/my-languages.so'
 
 
 LANGUAGES = {lang: Language(BUILD_PATH, lang) for lang in LANGUAGE_REPOS}
@@ -43,7 +45,7 @@ def extract_functions_from_code(code: bytes, language_id: str):
             return node.type in ("function_declaration", "method_definition", "arrow_function")
         elif language_id == "php":
             return node.type in ("function_definition", "method_declaration")
-        return False
+        return node.type == "function_definition"
 
     def get_name(node):
         name_types = {"name", "identifier", "property_identifier"}

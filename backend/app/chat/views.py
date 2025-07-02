@@ -9,7 +9,7 @@ from dotenv import load_dotenv, dotenv_values
 import tempfile, os, shutil, re, fitz, uuid, requests, json, threading
 
 from .models import UploadedDocument
-from .req_extractor import extract_requirements, extract_requirement_candidates, preprocess_requirements
+from .req_extractor import extract_requirements, preprocess_requirements
 from .prompt_builder import build_prompt
 from .func_parser import parse_directory_for_functions, preprocess_functions
 from .similarity_computer import return_similarity_matches

@@ -9,36 +9,6 @@ import re
 import time
 import re
 
-def extract_requirement_candidates(text: str, k: int = 2, requirement_id_only: bool = False) -> list:
-    lines = text.splitlines()
-    candidates = []
-    requirement_keywords = {"shall", "must", "should", "can", "may", "will", "has"}
-    requirement_id_pattern = re.compile(r'(US\d+-[A-Z]\d+|REQ-\d+)', re.IGNORECASE)
-
-    for i, line in enumerate(lines):
-        stripped_line = line.strip()
-
-        if re.search(r'(author|date|log|version|page|table of contents)', stripped_line.lower()):
-            continue
-
-        has_req_id = bool(requirement_id_pattern.search(stripped_line))
-
-        has_keyword = any(kword in stripped_line.lower() for kword in requirement_keywords)
-
-        if has_req_id:
-            if not requirement_id_only and not has_keyword:
-                continue
-
-            start = max(0, i - k)
-            end = min(len(lines), i + k + 1)
-            context_block = lines[start:end]
-
-            if any(re.search(r'\d', l) for l in context_block):
-                candidates.append("\n".join(context_block).strip())
-
-    return candidates
-
-import re
 
 def preprocess_requirements(text: str) -> list:
     start = time.time()
