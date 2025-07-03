@@ -1,0 +1,109 @@
+LLM_MODE_REQ_EXTRACTION="API"
+LLM_MODE_CHAT="API"
+LLM_API_MODEL="gpt-4.1-mini"
+
+Embedding mode:
+name + comments
+
+Documents:
+Requirements Document
+
+Code uploaded:
+MRS/backend/app
+MRS/backend/routes
+MRS/backend/tests
+MRS/frontend/src
+MRS/frontend/tests
+
+Top n similarity:
+3
+
+Question-Answers:
+
+
+Is requirement US1-M1 tested?
+
+Requirement US1-M1 is tested.
+Test coverage is in:   - AuthenticationTest.php     - test_users_can_authenticate_using_the_login_endpoint     - test_users_can_not_authenticate_with_invalid_password     - test_users_can_logout     - test_users_can_get_user_data
+These tests verify the login and authorization system for the 'report manager' role.
+
+-
+
+Is requirement US2-M1 tested?
+
+Yes, requirement US2-M1 is tested.
+Tests related to it are in: - QuestionsTest.php with functions:   - test_get_questions_on_populated_database   - test_get_active_questions_on_populated_database
+Core functionality is in: - QuestionsController.php function: getAllQuestions
+
+-
+
+Is requirement US2-M2 tested?
+
+Requirement US2-M2 is tested.
+Relevant files and functions: - Test file: ReportsTest.php   - test_create_report_base   - test_create_report_with_responses   - test_create_report_invalid_payload   - test_create_report_invalid_email   - test_create_report_default_status_and_priority - Controller function: ReportsController.php - createReport
+
+-
+
+Is requirement US2-M4 tested?
+
+Requirement US2-M4 is tested.
+
+
+    Test file: AnswersTest.php - Test functions: test_create_answer_with_valid_playload, test_create_answer_with_invalid_payload   - Related implementation function: createAnswer in AnswersController.php   - Also related function: createAnswers in reports.api.js (frontend)
+    These tests cover creation of answers to open questions in the database, addressing US2-M4.
+
+-
+
+Is requirement US2-S6 tested?
+US2-S6
+
+Yes, it is tested.
+
+
+    Test file: FileTest.php - Test functions:     - test_upload_with_no_file     - test_upload_with_csv_file     - test_upload_with_image_no_report_id     - test_upload_with_image_and_invalid_report_id     - test_upload_with_image_and_valid_report_id  
+
+    Related source files and functions:     - FileController.php - upload     - reports.api.js - uploadFile     - Report.php - files
+
+-
+
+Is requirement US3-M2 tested?
+
+Requirement US3-M2 is tested.
+Test coverage can be found in:
+
+
+    File: ReportsTest.php   - Functions: test_get_reports_with_status_filter, test_get_reports_with_priority_filter, test_get_report_with_responses   - Controller function: getAllReports in ReportsController.php
+
+-
+
+Is requirement US4-M1 tested?
+
+Requirement US4-M1 is tested.
+Test coverage is in the file ReportsTest.php with these test functions:   - test_patch_report_valid_request   - test_patch_report_invalid_request   - test_patch_report_with_insufficient_authorization   - test_patch_report_invalid_user_id_request
+Also, the related implementation function is:   - updateReport in ReportsController.php
+
+-
+
+Is requirement US5-M1 tested?
+US5-M1
+
+Yes, requirement US5-M1 is tested.
+Test coverage is in the file QuestionsTest.php with the functions:   - test_create_mc_question_with_null_answer   - test_create_mc_question
+Also related test in QuestionsTest.php:   - test_create_mc_question_with_null_answer   - test_create_answer_with_invalid_payload
+Relevant API function: questions.api.js - submitQuestion.
+
+-
+
+Is requirement US5-M2 tested?
+
+US5-M2 is tested.
+Test coverage is in file:   - QuestionsTest.php     - Functions: test_create_mc_question, test_create_mc_question_with_null_answer
+
+-
+
+Is requirement US6-S2 tested?
+
+Requirement US6-S2 is tested.
+Test file: ReportsTest.php   Test function: test_patch_report_valid_request   Test function: test_patch_report_invalid_request   Test function: test_patch_report_with_insufficient_authorization   Test function: test_patch_report_invalid_user_id_request
+
+

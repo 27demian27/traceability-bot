@@ -1,0 +1,103 @@
+LLM_MODE_REQ_EXTRACTION="API"
+LLM_MODE_CHAT="API"
+LLM_API_MODEL="gpt-4o-mini"
+
+Embedding mode:
+name + comments
+
+Documents:
+Requirements Document
+
+Code uploaded:
+MRS/backend/app
+MRS/backend/routes
+MRS/backend/tests
+MRS/frontend/src
+MRS/frontend/tests
+
+Top n similarity:
+10
+
+Question-Answers:
+
+
+Is requirement US1-M1 tested?
+
+Yes, requirement US1-M1 is tested.
+
+
+    File: AuthenticationTest.php   - Function Name: test_users_can_authenticate_using_the_login_endpoint    - Function Name: test_users_can_not_authenticate_with_invalid_password    - Function Name: test_users_can_logout    - Function Name: test_users_can_get_user_data
+
+-
+
+Is requirement US2-M1 tested?
+
+Yes, requirement US2-M1 is tested.
+Files and Functions: - File: QuestionsTest.php   - Function: test_get_questions_on_populated_database   - Function: test_get_active_questions_on_populated_database   - Function: test_get_inactive_questions_on_populated_database
+
+-
+
+Is requirement US2-M2 tested?
+
+Yes, requirement US2-M2 is tested.
+
+Test Cases: - File: ReportsTest.php   - Function: test_create_report_with_responses   - Function: test_get_report_with_responses
+
+-
+
+Is requirement US2-M4 tested?
+
+Yes, requirement US2-M4 is tested.
+
+
+    File: AnswersTest.php   - Functions:      - test_create_answer_with_valid_playload     - test_create_answer_with_invalid_payload
+
+-
+
+Is requirement US2-S6 tested?
+
+Yes, requirement US2-S6 is tested.
+Tests: - File: FileTest.php   - Function: test_upload_with_image_and_valid_report_id - File: FileTest.php   - Function: test_upload_with_csv_file - File: FileTest.php   - Function: test_download_valid_file_name - File: FileTest.php   - Function: test_download_invalid_file_name
+
+-
+
+Is requirement US3-M2 tested?
+
+Yes, requirement US3-M2 is tested.
+
+File: ReportsTest.php - Function: test_get_report  - Function: test_get_report_with_responses - Function: test_get_reports_on_populated_database - Function: test_get_reports_on_empty_database
+
+-
+
+Is requirement US4-M1 tested?
+
+Yes, requirement US4-M1 is tested. 
+File: ReportsTest.php   Functions:  - test_patch_report_valid_request - test_patch_report_invalid_request - test_get_reports_with_priority_filter - test_get_reports_with_status_filter   - test_create_report_default_status_and_priority   - test_get_reports_on_populated_database  
+
+-
+
+Is requirement US5-M1 tested?
+
+Yes, requirement US5-M1 is tested.
+
+Files and Functions: - File: QuestionsTest.php   - Function: test_create_mc_question - File: QuestionsTest.php   - Function: test_create_mc_question_with_null_answer - File: AnswersTest.php   - Function: test_create_answer_with_invalid_payload - File: QuestionsTest.php   - Function: test_create_open_question
+
+-
+
+Is requirement US5-M2 tested?
+
+Yes, requirement US5-M2 is tested.
+
+Test File:  - File: QuestionsTest.php   - Function Name: test_create_mc_question    - Function Name: test_create_question_with_invalid_request
+
+Other Relevant Functions: - File: QuestionsController.php   - Function Name: createQuestion
+
+-
+
+Is requirement US6-S2 tested?
+
+Yes, requirement US6-S2 is tested.
+
+Test Files: - File: ReportsTest.php   - Function: test_patch_report_valid_request - File: ReportsTest.php   - Function: test_patch_report_invalid_request
+
+-

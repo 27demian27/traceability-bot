@@ -1,0 +1,129 @@
+LLM_MODE_REQ_EXTRACTION="API"
+LLM_MODE_CHAT="API"
+LLM_API_MODEL="gpt-4o-mini"
+
+Embedding mode:
+name
+
+Documents:
+Requirements Document + Testing Document
+
+Code uploaded:
+None
+
+Top n similarity:
+no similarity matches since no code
+
+Question-Answers:
+
+Is requirement R-4-1-F-M1 tested?
+
+Yes, requirement R-4-1-F-M1 is tested.
+File: Testing Document   Function: Acceptance test for R-4-1-F-M1 is marked as passed.
+
+-
+
+Is requirement R-3-1-F-M3 tested?
+
+Yes, requirement R-3-1-F-M3 has been tested.
+
+
+    File: ajvUtil.ts   - Test: Acceptance test passed.
+
+-
+
+
+Is requirement R-1-1-F-M5 tested?
+
+Yes, requirement R-1-1-F-M5 is tested.
+Files affected: - All files
+Test: - Acceptance test
+Status: - ✔
+
+-
+
+Is requirement R-6-2-NF-M2 tested?
+
+Yes, requirement R-6-2-NF-M2 is tested.
+Files Affected: - LICENSE - README.md - package.json - all files with license headers
+Test Status: - Acceptance test: ✔
+Source: - Testing Document, Traceability Matrix section.
+
+-
+
+Is requirement R-10-2-NF-M8 tested?
+
+Yes, requirement R-10-2-NF-M8 is tested.
+Files Affected: - All files
+Test Status: - Acceptance test: ✔
+Source: - Testing Document, Traceability Matrix section.
+
+-
+
+Is requirement R-8-2-F-M9 tested?
+
+Yes, requirement R-8-2-F-M9 is tested.
+
+
+    File: jsonValidator.ts - Test: Acceptance test
+
+
+Test Results: - Passed: ✔*
+
+-
+
+Is requirement R-5-2-NF-M4 tested?
+
+Yes, requirement R-5-2-NF-M4 is tested.
+
+Files and Test Result - File: Traceability Matrix - Test Result: Acceptance test - ✔* (Tested by student team, not the client)
+
+-
+
+Is requirement R-13-2-NF-WN1 tested?
+
+Requirement R-13-2-NF-WN1 is not tested. There are no acceptance or unit tests associated with it in the provided testing documents.
+
+-
+
+Is requirement R-9-2-F-M12 tested?
+
+Yes, requirement R-9-2-F-M12 is tested.
+
+Code Coverage - Testing Document: The requirement is addressed in the Traceability Matrix where it states:   - Requirement: R-9-2-F-M12   - Module: eValidator, Backend   - Test: Acceptance test   - Passed: ✔*
+
+This indicates that it has been included in acceptance testing and passed, albeit with a note that it was tested by the student team rather than the client.
+
+File References - File: Testing Document - Section: Traceability Matrix
+
+-
+
+Is requirement R-2-2-F-M6 tested?
+
+Yes, requirement R-2-2-F-M6 is tested.
+
+
+    Files affected: index.ts, jsonValidator.ts - Test type: Acceptance test - Passed?: ✔
+    This information can be found in the Traceability Matrix section of the testing document.
+
+-
+
+Is requirement R-7-2-NF-M7 tested?
+
+Yes, requirement R-7-2-NF-M7 is tested.
+
+Files Affected: - Dockefiles.prod - Dockerfiles.dev - docker-compose.yml
+
+Test: - Acceptance test: ✔* (Tested by student team)
+
+-
+
+Is requirement R-12-3-NF-M11 tested?
+
+Yes, requirement R-12-3-NF-M11 is tested. 
+
+
+    File: Traceability Matrix - Test: Acceptance test - Result: ✔ (Passed)
+
+
+
