@@ -1,0 +1,107 @@
+LLM_MODE_REQ_EXTRACTION="API"
+LLM_MODE_CHAT="API"
+LLM_API_MODEL="gpt-4.1-mini"
+
+Embedding mode:
+name + comments
+
+Documents:
+Requirements Document
+
+Code uploaded:
+MRS/backend/app
+MRS/backend/routes
+MRS/backend/tests
+MRS/frontend/src
+MRS/frontend/tests
+
+Top n similarity:
+5
+
+Question-Answers:
+
+Is requirement US1-M1 tested?
+
+Requirement US1-M1 is tested.
+Test coverage found in: - File: AuthenticationTest.php - Functions:    - test_users_can_authenticate_using_the_login_endpoint   - test_users_can_not_authenticate_with_invalid_password   - test_users_can_logout   - test_users_can_get_user_data
+
+-
+
+Is requirement US2-M1 tested?
+
+Requirement US2-M1 is tested.
+Relevant files and functions: - Test file: QuestionsTest.php   - Functions: test_get_questions_on_populated_database, test_get_active_questions_on_populated_database, test_get_inactive_questions_on_populated_database - Controller function: QuestionsController.php - getAllQuestions
+
+-
+
+Is requirement US2-M2 tested?
+
+Requirement US2-M2 is tested.
+Tests related to US2-M2 are found in the file:   - ReportsTest.php     with test functions:     - test_create_report_base     - test_create_report_with_responses     - test_create_report_invalid_payload     - test_create_report_invalid_email
+Also related functions include:   - createReport in ReportsController.php
+These confirm that US2-M2 ("The API must be able to create the report with responses in the database.") is covered by tests.
+
+-
+
+Is requirement US2-M4 tested?
+
+Requirement US2-M4 is tested.
+
+
+    Backend function: createAnswer in AnswersController.php - Tests: test_create_answer_with_valid_playload and test_create_answer_with_invalid_payload in AnswersTest.php - Frontend function related: createAnswers in reports.api.js   - Test coverage for API: test_create_open_question in QuestionsTest.php (also related)
+    These files and functions cover the creation of answers in the database for open questions as per US2-M4.
+
+
+-
+
+Is requirement US2-S6 tested?
+US2-S6   Yes, it is tested.
+
+
+    Related functions:     - uploadFile in reports.api.js     - upload in FileController.php
+
+    Test coverage in:     - FileTest.php with tests like test_upload_with_no_file, test_upload_with_csv_file, test_upload_with_image_and_valid_report_id among others.
+
+-
+
+Is requirement US3-M2 tested?
+
+Requirement US3-M2 is tested.
+Test file and function: - ReportsTest.php - test_get_report_with_responses   - ReportsTest.php - test_get_reports_with_status_filter   - ReportsTest.php - test_get_reports_with_priority_filter
+Relevant controller function: - ReportsController.php - getReport   - ReportsController.php - getAllReports
+
+-
+
+Is requirement US4-M1 tested?
+
+Requirement US4-M1 is tested.
+Files and functions related:   - ReportsTest.php     - test_patch_report_valid_request     - test_patch_report_invalid_request     - test_patch_report_with_insufficient_authorization     - test_patch_report_invalid_user_id_request     - test_get_reports_with_priority_filter     - test_get_reports_with_status_filter   - ReportsController.php     - updateReport
+
+-
+
+Is requirement US5-M1 tested?
+
+Requirement US5-M1 is tested.
+Test coverage files and functions: - QuestionsTest.php     - test_create_mc_question_with_null_answer     - test_create_mc_question     - also indirectly tested in test_create_answer_with_invalid_payload (AnswersTest.php)   - questions.api.js     - submitQuestion
+These confirm tests related to the requirement that questions can have a list of multiple choice answers, possibly empty.
+
+-
+
+Is requirement US5-M2 tested?
+
+Requirement US5-M2 is tested.
+Relevant test file and function:   - QuestionsTest.php - test_create_mc_question   - QuestionsTest.php - test_create_mc_question_with_null_answer
+Related implementation files and functions:   - QuestionsController.php - createQuestion   - questions.api.js - submitQuestion
+
+-
+
+Is requirement US6-S2 tested?
+US6-S2
+
+Yes, requirement US6-S2 is tested.
+
+
+    Related code file: ReportsController.php (function: updateReport) - Related tests: ReportsTest.php     - test_patch_report_valid_request     - test_patch_report_invalid_user_id_request     - test_patch_report_invalid_request     - test_patch_report_with_insufficient_authorization     - test_patch_report_invalid_user_id_request
+    These tests verify the API's ability to update report entries to assign a 'report manager' to the report.
+
+

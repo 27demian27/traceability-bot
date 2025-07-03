@@ -1,0 +1,265 @@
+{
+    "US1-M1": {
+        "implementation": {
+            "AuthController.php": ["login", "logout"]
+        },
+        "tests": {
+            "AuthenticationTest.php":["test_users_can_authenticate_using_the_login_endpoint", "test_users_can_not_authenticate_with_invalid_password", "test_users_can_logout", "test_users_can_get_user_data"]
+        }
+    },
+    "US2-M1": {
+        "implementation": {
+            "QuestionsController.php": ["getAllQuestions"]
+        },
+        "tests": {
+            "QuestionsTest.php": ["test_get_questions_on_empty_database", "test_get_questions_on_populated_database", "test_get_active_questions_on_populated_database", "test_get_inactive_questions_on_populated_database"]
+        }
+    },  
+    "US2-M2": {
+        "implementation": {
+            "ReportsController.php": ["createReport"]
+        },
+        "tests": {
+            "ReportsTest.php": ["test_create_report_invalid_payload", "test_create_report_invalid_email", "test_create_report_default_status_and_priority", "test_create_report_base", "test_create_report_with_responses"]
+        }
+    },
+    "US2-M3": {
+        "implementation": {
+            "reports.api.js": ["createAnswers", "submitReport"]
+        },
+        "tests": {}
+    },
+    "US2-M4": {
+        "implementation": {
+            "AnswersController.php": ["createAnswer"]
+        },
+        "tests": {
+            "AnswersTest.php": ["test_create_answer_with_valid_playload", "test_create_answer_with_invalid_payload"]
+        }
+    },
+    "US2-S5": {
+        "implementation": {
+            "reports.api.js": ["submitReport", "uploadFile"]
+        },
+        "tests": {}
+    },
+    "US2-S6": {
+        "implementation": {
+            "FileController.php": ["upload"]
+        },
+        "tests": {
+            "FileTest.php": ["test_upload_with_no_file", "test_upload_with_csv_file", "test_upload_with_image_no_report_id", "test_upload_with_image_and_invalid_report_id", "test_upload_with_image_and_valid_report_id"]
+        }
+    },
+    "US2-S7": {
+        "implementation": {
+            "FileController.php": ["upload"]
+        },
+        "tests": {
+            "FileTest.php": ["test_upload_with_image_and_valid_report_id"]
+        }
+    },
+    "US3-M1": {
+        "implementation": {
+            "ReportsController.php": ["createReport", "updateReport"]
+        },
+        "tests": {}
+    },
+    "US3-M2": {
+        "implementation": {
+            "ReportsController.php": ["getReport"]
+        },
+        "tests": {
+            "ReportsTest.php": ["test_get_report_invalid_id", "test_get_report", "test_get_report_with_responses"]
+        }
+    },
+    "US3-M3": {
+        "implementation": {
+            "ReportsController.php": ["getAllReports"]
+        },
+        "tests": {
+            "ReportsTest.php": ["test_get_reports_on_empty_database", "test_get_reports_on_populated_database"]
+        }
+    },
+    "US3-M4": {
+        "implementation": {
+            "Authenticate.php": ["redirectTo", "handle"]
+        },
+        "tests": {
+            "ReportsTest.php": ["test_get_reports_with_insufficient_authorization", "test_get_report_with_insufficient_authorization"]
+        }
+    },
+    "US3-S5": {
+        "implementation": {
+            "reports.api.js": ["getReport", "downloadFile"],
+            "SingleReportImages.jsx": ["SingleReportImages"],
+            "DashboardSingleReportPage.jsx": ["SingleReport "]
+        },
+        "tests": {}
+    },
+    "US3-S6": {
+        "implementation": {
+            "FileController.php": ["download"]
+        },
+        "tests": {
+            "FileTest.php": ["test_download_invalid_file_name", "test_download_valid_file_name", "test_download_with_invalid_authentication"]
+        }
+    },
+    "US3-S7": {
+        "implementation": {
+            "FileController.php": ["upload"]
+        },
+        "tests": {}
+    },
+    "US4-M1": {
+        "implementation": {
+            "ReportsController.php": ["updateReport"]
+        },
+        "tests": {
+            "ReportsTest.php": ["test_patch_report_invalid_request", "test_patch_report_valid_request"]
+        }
+    },
+    "US4-M2": {
+        "implementation": {
+            "Authenticate.php": ["redirectTo", "handle"]
+            },
+        "tests": {
+            "ReportsTest.php": ["test_patch_report_with_insufficient_authorization"]
+        }
+    },
+    "US5-M1": {
+        "implementation": {
+            "QuestionsController.php": ["createQuestion"]
+        },
+        "tests": {
+            "QuestionsTest.php": ["test_create_mc_question", "test_create_mc_question_with_null_answer"]
+        }
+    },
+    "US5-M2": {
+        "implementation": {
+            "QuestionsController.php": ["createQuestion"]
+        },
+        "tests": {
+            "QuestionsTest.php": ["test_create_question_with_invalid_request", "test_create_mc_question", "test_create_mc_question_with_null_answer", "test_create_open_question"]
+        }
+    },
+    "US5-M3": {
+        "implementation": {
+            "QuestionsController.php": ["createQuestion"]
+        },
+        "tests": {}
+    },
+    "US5-M4": {
+        "implementation": {
+            "QuestionsController.php": ["createQuestion"]
+        },
+        "tests": {}
+    },
+    "US5-M5": {
+        "implementation": {
+            "QuestionsController.php": ["updateQuestion"]
+        },
+        "tests": {
+            "QuestionsTest.php": ["test_patch_question_invalid_request", "test_patch_question_valid_request"]
+        }
+    },
+    "US5-M6": {
+        "implementation": {
+            "Authenticate.php": ["redirectTo", "handle"]
+        },
+        "tests": {
+            "QuestionsTest.php": ["test_create_open_question_with_insufficient_authorization", "test_patch_question_with_insufficient_authorization"]
+        }
+    },
+    "US6-S1": {
+        "implementation": {
+            "reports.api.js": ["updateReport"],
+            "ModalForm.jsx": ["ModalForm"]
+        },
+        "tests": {}
+    },
+    "US6-S2": {
+        "implementation": {
+            "ReportsController.php": ["updateReport"]
+        },
+        "tests": {
+            "ReportsTest.php": ["test_patch_report_invalid_request", "test_patch_report_valid_request", "test_patch_report_invalid_user_id_request"]
+        }
+    },
+    "US6-S3": {
+        "implementation": {
+            "Report.php": ["user"]
+        },
+        "tests": {}
+    },
+    "US7-M1": {
+        "implementation": {
+            "ReportPage.jsx": ["handleSubmit", "handleEmailChange"]
+        },
+        "tests": {}
+    },
+    "US7-S2": {
+        "implementation": {
+            "ReportPage.jsx": ["handleSubmit", "handleNotifyBoxChange"]
+        },
+        "tests": {}
+    },
+    "US7-S3": {
+        "implementation": {
+            "StatusChanged.php": ["getStatusText", "__construct", "envelope", "content"]
+        },
+        "tests": {}
+    },
+    "US8-S1": {
+        "implementation": {},
+        "tests": {}
+    },
+    "US9-C1": {
+        "implementation": {},
+        "tests": {}
+    },
+    "US9-C3": {
+        "implementation": {},
+        "tests": {}
+    },
+    "US11-M1": {
+        "implementation": {},
+        "tests": {}
+    },
+    "US11-M2": {
+        "implementation": {},
+        "tests": {}
+    },
+    "US11-M3": {
+        "implementation": {},
+        "tests": {}
+    },
+    "US11-S4": {
+        "implementation": {},
+        "tests": {}
+    },
+    "US11-S5": {
+        "implementation": {
+            "docker-compose.yml": ["*"]
+        },
+        "tests": {}
+    },
+    "US12-M1": {
+        "implementation": {
+            "README.md": ["*"]
+        },
+        "tests": {}
+    },
+    "US13-M1": {
+        "implementation": {
+            "*": ["*"]
+        },
+        "tests": {}
+    },
+    "US13-M2": {
+        "implementation": {
+            "*": ["*"]
+        },
+        "tests": {}
+    }
+}

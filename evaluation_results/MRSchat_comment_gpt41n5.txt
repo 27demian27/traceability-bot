@@ -1,0 +1,120 @@
+LLM_MODE_REQ_EXTRACTION="API"
+LLM_MODE_CHAT="API"
+LLM_API_MODEL="gpt-4.1"
+
+Embedding mode:
+name + comments
+
+Documents:
+Requirements Document
+
+Code uploaded:
+MRS/backend/app
+MRS/backend/routes
+MRS/backend/tests
+MRS/frontend/src
+MRS/frontend/tests
+
+Top n similarity:
+5
+
+Question-Answers:
+
+
+Is requirement US1-M1 tested?
+
+US1-M1:   Yes, requirement US1-M1 is tested.
+
+
+    Test files:   - AuthenticationTest.php     - test_users_can_authenticate_using_the_login_endpoint     - test_users_can_not_authenticate_with_invalid_password     - test_users_can_logout     - test_users_can_get_user_data
+
+-
+
+Is requirement US2-M1 tested?
+
+US2-M1: "The API must be able to retrieve the questionnaire from the database."
+Yes, this requirement is tested.
+
+
+    File: QuestionsTest.php     - Function(s):     - test_get_questions_on_populated_database     - test_get_active_questions_on_populated_database     - test_get_inactive_questions_on_populated_database
+
+    File: QuestionsController.php     - Function:     - getAllQuestions
+
+-
+
+Is requirement US2-M2 tested?
+
+US2-M2: The API must be able to create the report with responses in the database.
+Yes, requirement US2-M2 is tested.
+Relevant test functions: - ReportsTest.php:     - test_create_report_base   - test_create_report_with_responses   - test_create_report_invalid_payload   - test_create_report_invalid_email   - test_create_report_default_status_and_priority
+
+-
+
+Is requirement US2-M4 tested?
+US2-M4
+
+Yes, requirement US2-M4 is tested.
+
+
+    Test Files & Functions:   - AnswersTest.php:      - test_create_answer_with_valid_playload     - test_create_answer_with_invalid_payload   - QuestionsTest.php:     - test_create_open_question   - Related implementation:      - reports.api.js: createAnswers, answer     - AnswersController.php: createAnswer
+
+-
+
+Is requirement US2-S6 tested?
+
+US2-S6: The API should store uploaded files and create file entries in the database.
+Yes, US2-S6 is tested.
+
+
+    File: FileTest.php     - test_upload_with_csv_file   - test_upload_with_image_no_report_id   - test_upload_with_image_and_invalid_report_id   - test_upload_with_image_and_valid_report_id   - test_upload_with_no_file
+
+-
+
+Is requirement US3-M2 tested?
+
+US3-M2
+Yes, requirement US3-M2 is tested.
+Relevant test(s): - ReportsTest.php: test_get_report_with_responses - ReportsTest.php: test_get_report - ReportsTest.php: test_get_report_invalid_id
+
+-
+
+Is requirement US4-M1 tested?
+
+US4-M1: "The API must be able to update report entries’ status and priority in the database."
+Yes, this requirement is tested.
+Related test code files and functions: - ReportsTest.php:    - test_patch_report_valid_request   - test_patch_report_invalid_request   - test_patch_report_invalid_user_id_request   - test_patch_report_with_insufficient_authorization
+
+
+    ReportsController.php:   - updateReport
+
+-
+
+Is requirement US5-M1 tested?
+
+US5-M1
+Yes, requirement US5-M1 is tested.
+Evidence: - File: QuestionsTest.php     - Functions:          - test_create_mc_question         - test_create_mc_question_with_null_answer
+
+-
+
+Is requirement US5-M2 tested?
+
+US5-M2:   Yes, this requirement is tested.
+
+
+    Test file: QuestionsTest.php - Test function(s): test_create_mc_question
+
+-
+
+Is requirement US6-S2 tested?
+
+US6-S2
+Test coverage for requirement US6-S2 ("The API must be able to update report entries in the database to assign ‘report manager’ to the report.") is present in:
+
+
+    ReportsTest.php   - test_patch_report_valid_request   - test_patch_report_invalid_request   - test_patch_report_invalid_user_id_request   - test_patch_report_with_insufficient_authorization
+
+    ReportsController.php   - updateReport
+    These files/functions handle updating report entries, including assignment operations.
+
+-

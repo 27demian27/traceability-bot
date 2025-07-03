@@ -15,8 +15,6 @@ from .func_parser import parse_directory_for_functions, preprocess_functions
 from .similarity_computer import return_similarity_matches
 from .graph_builder import build_similarity_graph, save_graph, draw_graph
 
-K=5
-
 class ChatBotView(APIView):
 
     def post(self, request):
@@ -296,7 +294,10 @@ class EmbeddingView(APIView):
         requirements_list = request.session["requirements"]
         requirements_json = [item for sublist in requirements_list for item in sublist]
         
-        similarity_matches = return_similarity_matches(requirements_json, code_json, top_n=K, mode=mode)
+        load_dotenv()
+        N = int(os.getenv("TOP_N_MATCHES"))
+
+        similarity_matches = return_similarity_matches(requirements_json, code_json, top_n=N, mode=mode)
         graph = build_similarity_graph(requirements_json, code_json, similarity_matches)
         
         save_graph(graph, "debug/similarity_graph.png")
